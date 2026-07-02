@@ -81,17 +81,9 @@ func main() {
 	for ref, thing := range things.Things() {
 		switch thing.(type) {
 		case *t.Player:
-			// WARNING: deleting things while iterating over them is unsafe.
-			// dont do this:
-			// things.Delete(ref)
-
-			// accumulate first.
-			ToDelete = append(ToDelete, ref)
+				things.Delete(thing)
 		}
 	}
-	// Accumulate, then delete.
-	things.Delete(ToDelete...)
-	ToDelete = ToDelete[:] // reset slice length
 }
 
 ```
