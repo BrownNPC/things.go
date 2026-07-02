@@ -80,7 +80,7 @@ func main() {
 	for ref, thing := range things.Things() {
 		switch thing.(type) {
 		case *t.Player:
-				things.Delete(thing)
+				things.Delete(ref)
 		}
 	}
 }
