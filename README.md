@@ -77,7 +77,6 @@ func main() {
 	}
 
 	// iterate all things that exist and delete them.
-	var ToDelete = make([]t.ThingRef, 0)
 	for ref, thing := range things.Things() {
 		switch thing.(type) {
 		case *t.Player:
