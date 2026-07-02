@@ -15,6 +15,7 @@ type ThingRef struct{ idx, gen uint }
 // Things is a pool of Things. It is responsible for creating, deleting, reusing things.
 // The zero value is usable.
 type Things struct {
+	// indexed by ThingRef.idx
 	things   []Thing
 	gen      []uint
 	freeList []uint
@@ -28,29 +29,30 @@ func (t *Things) Reserve(n int) {
 
 // Add will add Thing to the pool.
 // It returns a reference that will only ever point to this Thing.
-func (p *Things) Add(e Thing) ThingRef {
+func (t *Things) Add(thing Thing) ThingRef {
 	var i uint
-	if len(p.freeList) > 0 {
+	if len(t.freeList) > 0 {
 		// Reuse slot
-		i = p.freeList[len(p.freeList)-1]
-		p.freeList = p.freeList[:len(p.freeList)-1]
-		p.things[i] = e
-		p.gen[i]++ // Increment generation on reuse
+		// get last element of freeList
+		i = t.freeList[len(t.freeList)-1]
+		t.freeList = t.freeList[:len(t.freeList)-1]
+		t.things[i] = thing
+		t.gen[i]++ // Increment generation on reuse
 	} else {
-		// New slot
-		i = uint(len(p.things))
-		p.things = append(p.things, e)
-		p.gen = append(p.gen, 1) // Start generations at 1 (0 = uninitialized/invalid)
+		// New slot, add a new thing.
+		i = uint(len(t.things))
+		t.things = append(t.things, thing)
+		t.gen = append(t.gen, 1) // Start generations at 1 (0 = uninitialized/invalid)
 	}
-	return ThingRef{idx: i, gen: p.gen[i]}
+	return ThingRef{idx: i, gen: t.gen[i]}
 }
 
 // Things returns an iterator over all the things that have been added.
-func (p *Things) Things() iter.Seq2[ThingRef, Thing] {
+func (t *Things) Things() iter.Seq2[ThingRef, Thing] {
 	return func(yield func(ThingRef, Thing) bool) {
-		for i, thing := range p.things {
+		for i, thing := range t.things {
 			if thing != nil {
-				ref := ThingRef{idx: uint(i), gen: p.gen[i]}
+				ref := ThingRef{idx: uint(i), gen: t.gen[i]}
 				if !yield(ref, thing) {
 					return
 				}
@@ -60,39 +62,34 @@ func (p *Things) Things() iter.Seq2[ThingRef, Thing] {
 }
 
 // Get retrieves a Thing. Returns nil if the reference is stale or invalid.
-func (p *Things) Get(ref ThingRef) Thing {
-	if ref.idx >= uint(len(p.gen)) || ref.gen != p.gen[ref.idx] || ref.gen == 0 {
+func (t *Things) Get(ref ThingRef) Thing {
+	if ref.idx >= uint(len(t.gen)) || ref.gen != t.gen[ref.idx] || ref.gen == 0 {
 		return nil
 	}
-	return p.things[ref.idx]
+	return t.things[ref.idx]
 }
 
-// Delete invalidates the passed in ThingRefs, by making the slot the thing is stored in reusable.
+// Delete invalidates the passed in ThingRefs.
 //
-// WARNING: you should not delete a Thing while you are iterating all the things.
+// WARNING: you should not delete a Thing while you are iterating over things.
 //
 // In most cases you should collect all the things to delete inside a slice, and delete them all
 // later, like at the very end of the frame in your game.
-func (p *Things) Delete(refs ...ThingRef) {
+func (t *Things) Delete(refs ...ThingRef) {
 	for _, ref := range refs {
-		if ref.idx < uint(len(p.gen)) && ref.gen == p.gen[ref.idx] && ref.gen != 0 {
-			p.things[ref.idx].onDestroy()
-			p.things[ref.idx] = nil
-			p.gen[ref.idx]++ // Increment gen to invalidate existing references
-			p.freeList = append(p.freeList, ref.idx)
+		if ref.idx < uint(len(t.gen)) && ref.gen == t.gen[ref.idx] && ref.gen != 0 {
+			// onDestroy method will store the object in a cache.
+			t.things[ref.idx].onDestroy()
+			t.things[ref.idx] = nil
+			t.gen[ref.idx]++ // Increment gen to invalidate existing references
+			t.freeList = append(t.freeList, ref.idx)
 		}
 	}
 }
-// cache allocations.
+
+// caches allocations.
 type cache[T any] struct {
 	objects []*T
-}
-
-func (p *cache[T]) Reserve(n int) {
-	p.objects = slices.Grow(p.objects, n)
-	for range n {
-		p.objects = append(p.objects, new(T))
-	}
 }
 
 func (p *cache[T]) New(v T) any {

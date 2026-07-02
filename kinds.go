@@ -16,3 +16,7 @@ type Zombie struct {
 type Bullet struct {
 	Damage int
 }
+
+type Hero struct{
+	Health int
+}
