@@ -5,10 +5,9 @@ A dead-simple and performant way to store objects in 100 lines of Go.
 # Usage
 
 1. Just copy and paste [things.go](./things.go) into a `things` folder in your project.
-2. add the tool to your project by adding the line `tool github.com/BrownNPC/things.go/cmd` in your `go.mod` file.
+2. add the tool to your project by running `go get -tool github.com/BrownNPC/things.go/cmd` in your terminal.
 
-2. Make a file such as `kinds.go` in the same folder and paste the follwing contents:
-
+3. Make a file such as `kinds.go` in the same folder and paste the follwing contents:
 ```go
 //go:generate go tool github.com/BrownNPC/things.go/cmd
 package t
