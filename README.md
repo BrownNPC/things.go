@@ -7,9 +7,8 @@ A dead-simple and performant way to store objects in 100 lines of Go.
 1. Just copy and paste [things.go](./things.go) into a `things` folder in your project.
 2. add the tool to your project by running `go get -tool github.com/BrownNPC/things.go/cmd` in your terminal.
 
-3. Make a file such as `kinds.go` in the same folder and paste the follwing contents:
+3. Make a file such as `player.go` in the same folder and paste the follwing contents:
 ```go
-//go:generate go tool github.com/BrownNPC/things.go/cmd
 package t
 
 type Player struct {
@@ -17,11 +16,8 @@ type Player struct {
 	Rotation float32
 	Health   int
 }
-// add other kinds of structs like a Zombie struct:
 ```
-4. **every time** `kinds.go` is edited run the command `go generate ./...` in your terminal. 
-
-> You can put your structs in different files in the same folder too, just make sure at least one file has the `go generate` comment at the top.
+4. **every time** a new struct is added/removed from the package: run the command `go generate ./...` in your terminal. 
 
 Make sure you read the `things.go` file. It's only 100 lines.
 
