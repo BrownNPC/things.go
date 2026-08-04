@@ -21,7 +21,7 @@ type Player struct {
 ```
 4. **every time** `kinds.go` is edited run the command `go generate ./...` in your terminal. 
 
-You can put your structs in different files too, just make sure at least one file has the `go generate` comment at the top.
+> You can put your structs in different files too, just make sure at least one file has the `go generate` comment at the top.
 
 Make sure you read the `things.go` file. It's only 100 lines.
 
