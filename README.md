@@ -9,7 +9,7 @@ A dead-simple and performant way to store objects in 100 lines of Go.
 2. Make a file such as `kinds.go` in the same folder and paste the follwing contents:
 
 ```go
-//go:generate go run github.com/BrownNPC/things.go/cmd@latest
+//go:generate go tool github.com/BrownNPC/things.go/cmd
 package t
 
 type Player struct {
