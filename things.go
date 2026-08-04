@@ -1,3 +1,4 @@
+//go:generate go run github.com/BrownNPC/things.go/cmd@latest
 package t
 
 import (
