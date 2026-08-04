@@ -7,7 +7,7 @@ A dead-simple and performant way to store objects in 100 lines of Go.
 1. Just copy and paste [things.go](./things.go) into a `things` folder in your project.
 2. add the tool to your project by running `go get -tool github.com/BrownNPC/things.go/cmd` in your terminal.
 
-3. Make a file such as `player.go` in the same folder and paste the follwing contents:
+3. Now you can make a file such as `player.go` in the same folder:
 ```go
 package t
 
