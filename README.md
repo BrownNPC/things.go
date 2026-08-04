@@ -5,6 +5,7 @@ A dead-simple and performant way to store objects in 100 lines of Go.
 # Usage
 
 1. Just copy and paste [things.go](./things.go) into a `things` folder in your project.
+2. add the tool to your project by adding the line `tool github.com/BrownNPC/things.go/cmd` in your `go.mod` file.
 
 2. Make a file such as `kinds.go` in the same folder and paste the follwing contents:
 
@@ -19,10 +20,7 @@ type Player struct {
 }
 // add other kinds of structs like a Zombie struct:
 ```
-
-3. run the command `go generate ./...` in your terminal.
-
-**It must be run every time a struct is add/removed from `kinds.go`.**
+4. **every time** `kinds.go` is edited run the command `go generate ./...` in your terminal. 
 
 Make sure you read the `things.go` file. It's only 100 lines.
 
